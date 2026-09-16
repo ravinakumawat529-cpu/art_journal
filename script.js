@@ -38,25 +38,28 @@ fetch("https://api.github.com/repos/ravinakumawat529-cpu/art_journal/contents/")
   .then(files => {
     gallery.innerHTML = "";
 
-    files
-      .filter(file => file.name.toLowerCase().endsWith(".jpg"))
-      .forEach((file, index) => {
-        const info = artworkInfo[file.name] || {
-          title: `Artwork ${index + 1}`,
-          description: "Original artwork from my creative journal."
-        };
+    const images = files.filter(file =>
+      file.name.toLowerCase().endsWith(".jpg")
+    );
 
-        const card = document.createElement("article");
-        card.className = "card";
+    images.forEach((file, index) => {
 
-        card.innerHTML = `
-          <img src="${file.download_url}" alt="${info.title}">
-          <h3>${info.title}</h3>
-          <p>${info.description}</p>
-        `;
+      const info = artworkInfo[file.name] || {
+        title: `Artwork ${String(index + 1).padStart(2, "0")}`,
+        description: "An original artwork from my creative journal, created with imagination, patience and little moments of inspiration."
+      };
 
-        gallery.appendChild(card);
-      });
+      const card = document.createElement("article");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${file.download_url}" alt="${info.title}">
+        <h3>${info.title}</h3>
+        <p>${info.description}</p>
+      `;
+
+      gallery.appendChild(card);
+    });
   })
   .catch(error => {
     gallery.innerHTML = "<p>Gallery could not be loaded.</p>";
