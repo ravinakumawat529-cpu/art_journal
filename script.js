@@ -1,37 +1,77 @@
-/* Gallery image improvements */
+const gallery = document.querySelector(".cards");
 
-.cards {
-  align-items: stretch;
-}
+const artworkInfo = {
+  "20260915_145843.jpg": {
+    title: "A Peaceful Fishing Day",
+    description: "A quiet scene by the water, showing a peaceful afternoon surrounded by trees and nature."
+  },
 
-.card img {
-  width: 100%;
-  height: 260px;
-  object-fit: contain;
-  display: block;
-}
+  "20260915_145921.jpg": {
+    title: "April, Beautiful",
+    description: "A cheerful April-themed journal page filled with greenery, handmade details and a little reminder to stay cool."
+  },
 
-.card {
-  overflow: hidden;
-}
+  "20260915_150001.jpg": {
+    title: "Summer on Paper",
+    description: "A bright summer journal page combining flowers, sweets, handmade notes and playful details."
+  },
 
-.card h3,
-.card p {
-  padding-left: 20px;
-  padding-right: 20px;
-}
+  "20260915_150013.jpg": {
+    title: "Music in My Journal",
+    description: "A creative music-themed page made with handmade paper elements, musical objects and colourful details."
+  },
 
-.card h3 {
-  margin-top: 18px;
-}
+  "20260915_150040.jpg": {
+    title: "Have a Nice Day",
+    description: "A cheerful floral journal page built around green tones, handmade flowers and a positive message."
+  },
 
-.card p {
-  margin-bottom: 20px;
-}
-
-@media (max-width: 700px) {
-  .card img {
-    height: 260px;
+  "20260915_174238.jpg": {
+    title: "A Peaceful Neighborhood",
+    description: "A simple neighborhood scene with trees, a green garden, a house, a road, a fence and an open gate."
   }
-}
+};
+
+fetch("https://api.github.com/repos/ravinakumawat529-cpu/art_journal/contents/")
+  .then(response => response.json())
+  .then(files => {
+    gallery.innerHTML = "";
+
+    const images = files.filter(file =>
+      file.name.toLowerCase().endsWith(".jpg")
+    );
+
+    images.forEach(file => {
+      const info = artworkInfo[file.name];
+
+      const card = document.createElement("article");
+      card.className = "card";
+
+      if (info) {
+        card.innerHTML = `
+          <img
+            src="${file.download_url}"
+            alt="${info.title}"
+            style="width:100%;height:260px;object-fit:contain;display:block;"
+          >
+          <h3>${info.title}</h3>
+          <p>${info.description}</p>
+        `;
+      } else {
+        card.innerHTML = `
+          <img
+            src="${file.download_url}"
+            alt="Artwork"
+            style="width:100%;height:260px;object-fit:contain;display:block;"
+          >
+        `;
+      }
+
+      gallery.appendChild(card);
+    });
+  })
+  .catch(error => {
+    gallery.innerHTML = "<p>Gallery could not be loaded.</p>";
+    console.error(error);
+  });
 
