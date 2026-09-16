@@ -38,7 +38,7 @@ footer{text-align:center;padding:35px 20px;border-top:1px solid var(--line);colo
   .hero-content{padding-top:80px}.section{padding:65px 20px}
   nav{padding:18px 20px}
 
-  /* Gallery image improvements */
+/* Gallery image improvements */
 
 .cards {
   align-items: stretch;
@@ -68,7 +68,9 @@ footer{text-align:center;padding:35px 20px;border-top:1px solid var(--line);colo
 .card p {
   margin-bottom: 20px;
 }
+
+@media (max-width: 700px) {
+  .card img {
+    height: 260px;
+  }
 }
-
-  
-
