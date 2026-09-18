@@ -1,146 +1,107 @@
-const gallery = document.querySelector(".cards");
+/* ===== Gallery Lightbox ===== */
 
-const artworkInfo = {
-  "20260915_145843.jpg": {
-    title: "A Peaceful Fishing Day",
-    description:
-      "A quiet scene by the water, showing a peaceful afternoon surrounded by trees and nature."
-  },
+const images = document.querySelectorAll(".card img");
 
-  "20260915_145921.jpg": {
-    title: "April, Beautiful",
-    description:
-      "A cheerful April-themed journal page filled with greenery, handmade details and a little reminder to stay cool."
-  },
+const lightbox = document.createElement("div");
 
-  "20260915_150001.jpg": {
-    title: "Summer on Paper",
-    description:
-      "A bright summer journal page combining flowers, sweets, handmade notes and playful details."
-  },
+lightbox.style.position = "fixed";
+lightbox.style.inset = "0";
+lightbox.style.background = "rgba(0,0,0,0.88)";
+lightbox.style.display = "none";
+lightbox.style.alignItems = "center";
+lightbox.style.justifyContent = "center";
+lightbox.style.padding = "20px";
+lightbox.style.zIndex = "9999";
 
-  "20260915_150013.jpg": {
-    title: "Music in My Journal",
-    description:
-      "A creative music-themed page made with handmade paper elements, musical objects and colourful details."
-  },
+lightbox.innerHTML = `
+  <button
+    aria-label="Close"
+    style="
+      position:fixed;
+      top:18px;
+      right:22px;
+      width:44px;
+      height:44px;
+      border:none;
+      border-radius:50%;
+      background:white;
+      color:#302b2b;
+      font-size:28px;
+      cursor:pointer;
+      z-index:10000;
+    "
+  >×</button>
 
-  "20260915_150040.jpg": {
-    title: "Have a Nice Day",
-    description:
-      "A cheerful floral journal page built around green tones, handmade flowers and a positive message."
-  },
+  <img
+    src=""
+    alt="Large artwork"
+    style="
+      max-width:92vw;
+      max-height:88vh;
+      width:auto;
+      height:auto;
+      object-fit:contain;
+      border-radius:12px;
+    "
+  >
+`;
 
-  "20260915_174238.jpg": {
-    title: "A Peaceful Neighborhood",
-    description:
-      "A simple neighborhood scene with trees, a green garden, a house, a road, a fence and an open gate."
-  }
-};
+document.body.appendChild(lightbox);
+
+const largeImage = lightbox.querySelector("img");
+const closeButton = lightbox.querySelector("button");
 
 
-/* ===== Load JPG images from GitHub ===== */
+/* Open large photo */
 
-fetch("https://api.github.com/repos/ravinakumawat529-cpu/art_journal/contents/")
-  .then(response => response.json())
-  .then(files => {
+images.forEach(image => {
 
-    gallery.innerHTML = "";
+  image.style.cursor = "zoom-in";
 
-    const images = files.filter(file =>
-      file.name.toLowerCase().endsWith(".jpg")
-    );
+  image.addEventListener("click", () => {
 
-    images.forEach(file => {
+    largeImage.src = image.src;
+    largeImage.alt = image.alt;
 
-      const info = artworkInfo[file.name];
-
-      const card = document.createElement("article");
-      card.className = "card";
-
-      if (info) {
-        card.innerHTML = `
-          <img
-            src="${file.download_url}"
-            alt="${info.title}"
-            style="width:100%;height:260px;object-fit:contain;display:block;"
-          >
-          <h3>${info.title}</h3>
-          <p>${info.description}</p>
-        `;
-      } else {
-        card.innerHTML = `
-          <img
-            src="${file.download_url}"
-            alt="Artwork"
-            style="width:100%;height:260px;object-fit:contain;display:block;"
-          >
-        `;
-      }
-
-      gallery.appendChild(card);
-    });
-
-    setupLightbox();
-
-  })
-  .catch(error => {
-    gallery.innerHTML = "<p>Gallery could not be loaded.</p>";
-    console.error(error);
+    lightbox.style.display = "flex";
   });
 
+});
 
-/* ===== Large Photo / Lightbox ===== */
 
-function setupLightbox() {
+/* Close button */
 
-  const images = document.querySelectorAll(".card img");
+closeButton.addEventListener("click", () => {
 
-  const lightbox = document.createElement("div");
-  lightbox.className = "lightbox";
   lightbox.style.display = "none";
+  largeImage.src = "";
 
-  lightbox.innerHTML = `
-    <button class="lightbox-close" aria-label="Close">×</button>
-    <img src="" alt="Large artwork">
-  `;
+});
 
-  document.body.appendChild(lightbox);
 
-  const largeImage = lightbox.querySelector("img");
-  const closeButton = lightbox.querySelector(".lightbox-close");
+/* Close by clicking outside photo */
 
-  images.forEach(image => {
+lightbox.addEventListener("click", event => {
 
-    image.addEventListener("click", () => {
-      largeImage.src = image.src;
-      largeImage.alt = image.alt;
-      lightbox.style.display = "flex";
-    });
+  if (event.target === lightbox) {
 
-  });
-
-  closeButton.addEventListener("click", () => {
     lightbox.style.display = "none";
     largeImage.src = "";
-  });
 
-  lightbox.addEventListener("click", event => {
+  }
 
-    if (event.target === lightbox) {
-      lightbox.style.display = "none";
-      largeImage.src = "";
-    }
+});
 
-  });
 
-  document.addEventListener("keydown", event => {
+/* Close with Escape */
 
-    if (event.key === "Escape") {
-      lightbox.style.display = "none";
-      largeImage.src = "";
-    }
+document.addEventListener("keydown", event => {
 
-  });
+  if (event.key === "Escape") {
 
-}
+    lightbox.style.display = "none";
+    largeImage.src = "";
+
+  }
+
+});
